@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Item\Http\Controllers\ItemController;
+use Modules\Core\Http\Controllers\CoreController;
 
-Route::apiResource('items', ItemController::class)->names('item');
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
+    Route::apiResource('cores', CoreController::class)->names('core');
 });

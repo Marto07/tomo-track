@@ -1,37 +1,39 @@
 <?php
 
-namespace Modules\Item\Http\Controllers;
+namespace Modules\Core\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Modules\Item\Http\Requests\StoreItem;
 
-class ItemController extends Controller
+class CoreController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('item::index');
+        return view('core::index');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        return view('core::create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreItem $request) {
-        return new JsonResponse([
-            'message' => 'Registro exitoso',
-        ],200);
-    }
+    public function store(Request $request) {}
 
     /**
      * Show the specified resource.
      */
     public function show($id)
     {
-        return view('item::show');
+        return view('core::show');
     }
 
     /**
@@ -39,7 +41,7 @@ class ItemController extends Controller
      */
     public function edit($id)
     {
-        return view('item::edit');
+        return view('core::edit');
     }
 
     /**

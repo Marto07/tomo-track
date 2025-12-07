@@ -7,9 +7,12 @@ use Illuminate\Http\Request;
 use Modules\Location\Models\Location;
 use Modules\Location\Http\Requests\StoreLocation;
 use Modules\Location\Http\Requests\UpdateLocation;
+use Illuminate\Http\JsonResponse;
+use Modules\Core\Traits\ApiResponse;
 
 class LocationController extends Controller
 {
+    use ApiResponse;
     /**
      * Display a listing of the resource.
      */
@@ -23,12 +26,7 @@ class LocationController extends Controller
         
         $locations = $query->paginate($request->per_page ?? 10);
         
-        return response()->json([
-            'message' => 'Registros exitosos',
-            'data' => $locations,
-            'status' => 200,
-            'success' => true,
-        ],200);
+        return $this->PaginatedResponse($locations);
     }
 
     /**
@@ -40,20 +38,10 @@ class LocationController extends Controller
         $location = Location::create($validated);
 
         if (!$location) {
-            return response()->json([
-                'message' => 'Error al crear el registro',
-                'data' => null,
-                'status' => 500,
-                'success' => false,
-            ],500);
+            return $this->ErrorResponse('Error al crear el registro');
         }
 
-        return response()->json([
-            'message' => 'Registro exitoso',
-            'data' => $location,
-            'status' => 200,
-            'success' => true,
-        ],200);
+        return $this->SuccessResponse($location);
     }
 
     /**
@@ -64,20 +52,10 @@ class LocationController extends Controller
         $location = Location::find($id);
 
         if (!$location) {
-            return response()->json([
-                'message' => 'Registro no encontrado',
-                'data' => null,
-                'status' => 404,
-                'success' => false,
-            ],404);
+            return $this->ErrorResponse('Registro no encontrado');
         }
 
-        return response()->json([
-            'message' => 'Registro exitoso',
-            'data' => $location,
-            'status' => 200,
-            'success' => true,
-        ],200);
+        return $this->SuccessResponse($location);
     }
 
     /**
@@ -89,22 +67,12 @@ class LocationController extends Controller
         $location = Location::find($id);
 
         if (!$location) {
-            return response()->json([
-                'message' => 'Registro no encontrado',
-                'data' => null,
-                'status' => 404,
-                'success' => false,
-            ],404);
+            return $this->ErrorResponse('Registro no encontrado');
         }
 
         $location->update($validated);
 
-        return response()->json([
-            'message' => 'Registro exitoso',
-            'data' => $location,
-            'status' => 200,
-            'success' => true,
-        ],200);
+        return $this->SuccessResponse($location);
     }
 
     /**
@@ -114,21 +82,11 @@ class LocationController extends Controller
         $location = Location::find($id);
 
         if (!$location) {
-            return response()->json([
-                'message' => 'Registro no encontrado',
-                'data' => null,
-                'status' => 404,
-                'success' => false,
-            ],404);
+            return $this->ErrorResponse('Registro no encontrado');
         }
 
         $location->delete();
 
-        return response()->json([
-            'message' => 'Registro exitoso',
-            'data' => $location,
-            'status' => 200,
-            'success' => true,
-        ],200);
+        return $this->SuccessResponse($location);
     }
 }
