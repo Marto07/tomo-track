@@ -5,10 +5,16 @@ namespace Modules\Item\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Item\Models\Category;
+use Modules\Core\Traits\ApiResponse;
+use Modules\Item\Http\Requests\StoreCategory;
+use Modules\Item\Http\Requests\UpdateCategory;
+
 
 class CategoryController extends Controller
 {
+    use ApiResponse;
     /**
+     * 
      * Display a listing of the resource.
      */
     public function index(Request $request)
@@ -21,35 +27,20 @@ class CategoryController extends Controller
                 $query->where('name', 'like', '%' . $request->search . '%');
             } 
         */
-
-        $stockItems = $query->paginate($perPage);
-
-        return response()->json([
-            'data' => $stockItems->items(),
-            'meta' => [
-                'total' => $stockItems->total(),
-                'per_page' => $stockItems->perPage(),
-                'current_page' => $stockItems->currentPage(),
-                'last_page' => $stockItems->lastPage(),
-            ],
-            'links' => [
-                'first' => $stockItems->url(1),
-                'last' => $stockItems->url($stockItems->lastPage()),
-                'prev' => $stockItems->previousPageUrl(),
-                'next' => $stockItems->nextPageUrl(),
-            ],
-            
-        ]);
+        $categories = $query->paginate($perPage);
+        return $this->PaginatedResponse($categories);
+        
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCategory $request)
     {
-        //
-
-        return response()->json([]);
+        $validated = $request->validated();
+        $category = Category::create($validated);
+        if(!$category) return $this->ErrorResponse(null, 404);
+        return $this->SuccessResponse($category);
     }
 
     /**
@@ -57,19 +48,21 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
-
-        return response()->json([]);
+        $category = Category::find($id);
+        if(!$category) return $this->ErrorResponse(null, 404);
+        return $this->SuccessResponse($category);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCategory $request, $id)
     {
-        //
-
-        return response()->json([]);
+        $category = Category::find($id);
+        if (!$category) return $this->ErrorResponse(null, 404);
+        $validated = $request->validated();
+        $category->update($validated);
+        return $this->SuccessResponse($category);
     }
 
     /**
@@ -77,8 +70,9 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
-
-        return response()->json([]);
+        $category = Category::find($id);
+        if (!$category) return $this->ErrorResponse(null, 404);
+        $category = Category::destroy($id);
+        return $this->SuccessResponse($category);
     }
 }

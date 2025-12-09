@@ -11,9 +11,7 @@ class Category extends Model
 {
     use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     */
+    protected $table = 'categories'; 
     protected $fillable = ['name'];
 
 

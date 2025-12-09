@@ -24,19 +24,19 @@ trait ApiResponse {
         ],200);
     }
 
-    public function SuccessResponse($data) {
+    public function SuccessResponse($data, $message = null) {
         return response()->json([
             'data' => $data,
             'success' => true,
-            'message' => 'Data retrieved successfully',
+            'message' => $message ?? 'Data retrieved successfully',
         ],200);
     }
 
-    public function ErrorResponse($message, $code = 500) {
+    public function ErrorResponse($message = null, $code = 500) {
         return response()->json([
             'data' => null,
             'success' => false,
-            'message' => $message,
+            'message' => $message ?? 'Error during request',
         ],$code);
     }
 
