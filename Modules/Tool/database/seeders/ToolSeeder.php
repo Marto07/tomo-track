@@ -1,27 +1,27 @@
 <?php
 
-namespace Modules\Item\Database\Seeders;
+namespace Modules\Tool\Database\Seeders;
 
 
 use Illuminate\Database\Seeder;
-use Modules\Item\Models\Item;
+use Modules\Tool\Models\Tool;
 
-class ItemSeeder extends Seeder
+class ToolSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Item::create([
+        Tool::create([
             'name' => "Martillo",
             'category_id' => 1,
         ]);
-        Item::create([
+        Tool::create([
             'name' => "Taladro",
             'category_id' => 2,
         ]);
-        Item::create([
+        Tool::create([
             'name' => "Compresor de asfalto",
             'category_id' => 3,
         ]);

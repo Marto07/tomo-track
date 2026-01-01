@@ -1,0 +1,40 @@
+<?php
+
+namespace Modules\Tool\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+// use Modules\Tool\Database\Factories\ToolFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Tool\Models\Category;
+use Modules\Company\Models\Company;
+
+class Tool extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $table = 'tools'; 
+
+    protected $fillable = [
+        'name',
+        'description',
+        'category_id',
+    ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+
+
+    // protected static function newFactory(): ItemFactory
+    // {
+    //     // return ItemFactory::new();
+    // }
+}

@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stock_items', function (Blueprint $table) {
+        Schema::create('stock_tools', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('item_id')->constrained();
+            $table->foreignId('tool_id')->constrained();
             $table->foreignId('location_id')->nullable()->constrained();
             $table->integer('quantity');
             $table->enum('status', ['available', 'in_use','broken','lost','maintenance'])->default('available');
