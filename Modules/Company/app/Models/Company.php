@@ -23,9 +23,7 @@ class Company extends Model
         'name',
         'legal_name',
         'tax_id',
-        'phone',
-        'email',
-        'website',
+        'logo',
         'status',
     ];
 

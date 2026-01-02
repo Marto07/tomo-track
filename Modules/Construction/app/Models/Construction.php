@@ -4,24 +4,37 @@ namespace Modules\Construction\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Modules\Construction\Database\Factories\ConstructionFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Company\Models\Company;
+use Modules\Core\Models\Address;
+
 class Construction extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     */
-    protected $fillable = [];
 
-    // protected static function newFactory(): ConstructionFactory
-    // {
-    //     // return ConstructionFactory::new();
-    // }
+    protected $fillable = [
+        'name',
+        'code',
+        'type',
+        'status',
+        'start_date',
+        'estimated_end_date',
+        'actual_end_date',
+        'description',
+        'budget',
+        'progress',
+    ];
+
+
 
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function address()
+    {
+        return $this->morphMany(Address::class, 'addressable');
     }
 }
