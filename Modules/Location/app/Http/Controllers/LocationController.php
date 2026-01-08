@@ -32,8 +32,16 @@ class LocationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreLocation $request) {
-        $validated = $request->validated();
+    public function store(Request $request) {
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'description' => 'nullable|string|max:300',
+            'street' => 'required|string|max:150',
+            'apartment' => 'nullable|string|max:50',
+            'number' => 'nullable|integer',
+            'city_id' => 'required|exists:cities,id',
+            'location_type_id' => 'required|exists:location_types,id'
+        ]);
 
         $location = Location::create($validated);
 
@@ -62,7 +70,15 @@ class LocationController extends Controller
      * Update the specified resource in storage.
      */
     public function update(UpdateLocation $request, $id) {
-        $validated = $request->validated();
+        $validated = $request->validated([
+            'name' => 'sometimes|required|string|max:100',
+            'description' => 'sometimes|nullable|string|max:300',
+            'location_type_id' => 'sometimes|required|exists:location_types,id',
+            'street' => 'sometimes|required|string|max:150',
+            'apartment' => 'sometimes|nullable|string|max:50',
+            'number' => 'sometimes|nullable|integer',
+            'city_id' => 'sometimes|required|exists:cities,id',
+        ]);
 
         $location = Location::find($id);
 

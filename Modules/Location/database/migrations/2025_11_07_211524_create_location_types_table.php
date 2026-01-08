@@ -11,15 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('locations', function (Blueprint $table) {
+        Schema::create('location_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->string('street');
-            $table->string('apartment')->nullable();
-            $table->integer('number')->nullable();
-            $table->string('city_id')->constrained('cities')->onDelete('restrict');
-            $table->foreignId('location_type_id')->constrained('location_types')->onDelete('restrict');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('locations');
+        Schema::dropIfExists('location_types');
     }
 };

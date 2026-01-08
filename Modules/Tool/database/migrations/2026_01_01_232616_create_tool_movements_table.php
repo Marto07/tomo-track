@@ -16,9 +16,8 @@ return new class extends Migration
             $table->foreignId('tool_id')->constrained('tools');
             $table->foreignId('from_location_id')->nullable()->constrained('locations');
             $table->foreignId('to_location_id')->nullable()->constrained('locations');
-            $table->foreignId('from_construction_id')->nullable()->constrained('constructions');
-            $table->foreignId('to_construction_id')->nullable()->constrained('constructions');
-            $table->string('type', 50); //(storage, assignment, transfer, repair, etc) ENUM PHP
+            $table->integer('quantity');
+            $table->foreignId('movement_type_id')->nullable()->constrained('movement_types');
             $table->timestamp('moved_at');
             $table->timestamps();
             $table->softDeletes();

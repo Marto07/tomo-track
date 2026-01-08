@@ -16,7 +16,7 @@ class Construction extends Model
     protected $fillable = [
         'name',
         'code',
-        'type',
+        'construction_type_id',
         'status',
         'start_date',
         'estimated_end_date',
@@ -33,7 +33,7 @@ class Construction extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function address()
+    public function addresses()
     {
         return $this->morphMany(Address::class, 'addressable');
     }

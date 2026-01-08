@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('tool_id')->constrained();
             $table->foreignId('location_id')->nullable()->constrained();
-            $table->integer('quantity');
-            $table->enum('status', ['available', 'in_use','broken','lost','maintenance'])->default('available');
             $table->string('serial_number')->nullable();
+            $table->integer('quantity');
+            $table->string('status')->nullable()->default('available'); //['available', 'in_use','broken','lost','maintenance'] enum php
             $table->integer('created_by')->nullable();
             $table->timestamps();
             $table->softDeletes();

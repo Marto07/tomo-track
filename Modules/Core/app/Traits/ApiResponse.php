@@ -4,7 +4,7 @@ namespace Modules\Core\Traits;
 
 trait ApiResponse {
 
-    public function PaginatedResponse($data) {
+    public function PaginatedResponse($data, $message = 'Data retrieved successfully', $code = 200) {
         return response()->json([
             'data' => $data->items(),
             'meta' => [
@@ -20,16 +20,18 @@ trait ApiResponse {
                 'next' => $data->nextPageUrl(),
             ],
             'success' => true,
-            'message' => 'Data retrieved successfully',
-        ],200);
+            'message' => $message,
+            'code' => $code,
+        ],$code);
     }
 
-    public function SuccessResponse($data, $message = null) {
+    public function SuccessResponse($data, $message = null, $code = 200) {
         return response()->json([
             'data' => $data,
             'success' => true,
             'message' => $message ?? 'Data retrieved successfully',
-        ],200);
+            'code' => $code,
+        ],$code);
     }
 
     public function ErrorResponse($message = null, $code = 500) {
@@ -37,6 +39,7 @@ trait ApiResponse {
             'data' => null,
             'success' => false,
             'message' => $message ?? 'Error during request',
+            'code' => $code,
         ],$code);
     }
 
