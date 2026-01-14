@@ -8,6 +8,8 @@ use Modules\Tool\Models\ToolMovement;
 use Modules\Tool\Models\Tool;
 use Modules\Location\Models\Location;
 use Modules\Core\Traits\ApiResponse;
+use Modules\Tool\Events\ToolMoved;
+use Modules\Tool\Services\ToolMovementService;
 
 class ToolMovementController extends Controller
 {
@@ -34,7 +36,19 @@ class ToolMovementController extends Controller
             'movement_type_id' => 'required|exists:movement_types,id',
         ]);
 
-        $toolMovement = ToolMovement::create([
+        if (isset($validatedData['from_location_id'])) {
+            $toolMovementService = new ToolMovementService();
+            $isValidStock = $toolMovementService->validateStock(
+                $validatedData['tool_id'],
+                $validatedData['from_location_id'],
+                $validatedData['quantity']
+            );
+            if (!$isValidStock) {
+                return $this->errorResponse('Insufficient stock at the from location.', 400);
+            }
+        }
+
+        $movement = ToolMovement::create([
             'tool_id' => $validatedData['tool_id'],
             'from_location_id' => $validatedData['from_location_id'] ?? null,
             'to_location_id' => $validatedData['to_location_id'],
@@ -43,9 +57,10 @@ class ToolMovementController extends Controller
             'moved_at' => now(),
         ]);
 
-        $toolMovement->load(['tool', 'fromLocation', 'toLocation', 'movementType']);
+        event(new ToolMoved($movement));
+        $movement->load(['tool', 'fromLocation', 'toLocation', 'movementType']);
 
-        return $this->successResponse($toolMovement, 201);
+        return $this->successResponse($movement, 201);
     }
 
     /**
