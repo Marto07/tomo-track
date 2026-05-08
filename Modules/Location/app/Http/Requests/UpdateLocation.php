@@ -12,20 +12,43 @@ class UpdateLocation extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:500',
+            'name' => 'required|string|max:100',
+            'description' => 'nullable|string|max:300',
+            'street' => 'nullable|string|max:100',
+            'apartment' => 'nullable|string|max:50',
+            'number' => 'nullable|integer',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'city_id' => 'nullable|exists:cities,id',
+            'location_type_id' => 'nullable|exists:location_types,id',
         ];
     }
 
     public function messages(): array
     {
-        return [
-            'name.required' => 'El nombre es obligatorio',
-            'name.string' => 'El nombre debe ser una cadena de caracteres',
-            'name.max' => 'El nombre es demasiado largo',
-            'description.string' => 'La descripción debe ser una cadena de caracteres',
-            'description.max' => 'La descripción es demasiado larga',
-        ];
+        return [];    
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+
+            $hasAddress =
+                $this->street ||
+                $this->number ||
+                $this->city_id;
+
+            $hasCoordinates =
+                $this->latitude ||
+                $this->longitude;
+
+            if (!$hasAddress && !$hasCoordinates) {
+                $validator->errors()->add(
+                    'location',
+                    'You must update either a valid address (street, number, city_id) or valid coordinates (latitude and longitude).'
+                );
+            }
+        });
     }
 
     /**

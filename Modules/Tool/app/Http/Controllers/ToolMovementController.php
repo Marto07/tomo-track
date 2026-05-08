@@ -10,6 +10,9 @@ use Modules\Location\Models\Location;
 use Modules\Core\Traits\ApiResponse;
 use Modules\Tool\Events\ToolMoved;
 use Modules\Tool\Services\ToolMovementService;
+use Modules\Tool\Services\ToolService;
+use Illuminate\Support\Facades\Log;
+use Modules\Tool\Exceptions\NotEnoughStock;
 
 class ToolMovementController extends Controller
 {
@@ -27,39 +30,65 @@ class ToolMovementController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {
-        $validatedData = $request->validate([
+    public function addStock(Request $request) {
+        //validate request
+        $validated = $request->validate([
             'tool_id' => 'required|exists:tools,id',
-            'from_location_id' => 'nullable|exists:locations,id',
             'to_location_id' => 'required|exists:locations,id',
             'quantity' => 'required|integer|min:1',
-            'movement_type_id' => 'required|exists:movement_types,id',
+            // 'movement_type_id' => 'required|exists:movement_types,id',
         ]);
 
-        if (isset($validatedData['from_location_id'])) {
-            $toolMovementService = new ToolMovementService();
-            $isValidStock = $toolMovementService->validateStock(
-                $validatedData['tool_id'],
-                $validatedData['from_location_id'],
-                $validatedData['quantity']
+        //if validation success, we initialize the service
+        $toolService = new ToolService();
+
+        try {
+            $movement = $toolService->addStock(
+                $validated['tool_id'],
+                $validated['to_location_id'],
+                $validated['quantity']
             );
-            if (!$isValidStock) {
-                return $this->errorResponse('Insufficient stock at the from location.', 400);
-            }
+        } catch (\Throwable $th) {
+            Log::error("Error adding stock: " . $th->getMessage());
+            return $this->errorResponse("Error in adding stock.", 500);
         }
 
-        $movement = ToolMovement::create([
-            'tool_id' => $validatedData['tool_id'],
-            'from_location_id' => $validatedData['from_location_id'] ?? null,
-            'to_location_id' => $validatedData['to_location_id'],
-            'quantity' => $validatedData['quantity'],
-            'movement_type_id' => $validatedData['movement_type_id'],
-            'moved_at' => now(),
-        ]);
-
-        event(new ToolMoved($movement));
         $movement->load(['tool', 'fromLocation', 'toLocation', 'movementType']);
 
+        return $this->successResponse($movement, 201);
+    }
+
+
+
+    // Transfer tool from point A to point B
+    public function transfer(Request $request) {
+        //validate request
+        $validated = $request->validate([
+            'tool_id' => 'required|exists:tools,id',
+            'from_location_id' => 'required|exists:locations,id',
+            'to_location_id' => 'required|exists:locations,id|different:from_location_id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        //if validation success, we initialize the service
+        $toolService = new ToolService();
+
+
+        try {
+            $result = $toolService->transferTool(
+                $validated['tool_id'],
+                $validated['from_location_id'],
+                $validated['to_location_id'],
+                $validated['quantity']
+            );
+        } catch (NotEnoughStock $e) {
+            return $this->errorResponse("Not enough stock.", 400);
+        } catch (\Throwable $th) {
+            Log::error("Error transferring tool: " . $th->getMessage());
+            return $this->errorResponse("Error in transferring tool.", 500);
+        }
+
+        $movement = $result->load(['tool', 'fromLocation', 'toLocation', 'movementType']);
         return $this->successResponse($movement, 201);
     }
 

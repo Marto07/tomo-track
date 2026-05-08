@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Core\Models\Address;
+use Modules\Location\Database\Factories\LocationFactory;
 
 class Location extends Model
 {
@@ -18,11 +19,18 @@ class Location extends Model
     protected $fillable = [
         'name',
         'description',
-        'street', 
+        'street',
         'apartment',
         'number',
+        'latitude',
+        'longitude',
         'city_id',
         'location_type_id'
+    ];
+
+    protected $casts = [
+        'latitude' => 'float',
+        'longitude' => 'float',
     ];
 
     public function address()
@@ -39,4 +47,11 @@ class Location extends Model
     {
         return $this->belongsTo(\Modules\Core\Models\City::class);
     }
+
+    protected static function newFactory()
+    {
+        return LocationFactory::new();
+    }
+
+ 
 }

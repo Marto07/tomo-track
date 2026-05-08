@@ -5,6 +5,7 @@ namespace Modules\Location\Providers;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Nwidart\Modules\Traits\PathNamespace;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -21,12 +22,14 @@ class LocationServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
         $this->registerCommands();
         $this->registerCommandSchedules();
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
+
     }
 
     /**
@@ -45,6 +48,7 @@ class LocationServiceProvider extends ServiceProvider
     {
         // $this->commands([]);
     }
+
 
     /**
      * Register command Schedules.

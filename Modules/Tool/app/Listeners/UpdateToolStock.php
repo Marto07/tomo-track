@@ -17,74 +17,54 @@ class UpdateToolStock
      * Handle the event.
      */
     public function handle(ToolMoved $event): void {
-        $movement = $event->movement;
-        DB::beginTransaction();
-        try {
-            $this->decreaseFromLocation($movement);
-            $this->increaseToLocation($movement);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Failed to update tool stock: ' . $e->getMessage());
-            throw $e;
-        }
-    }
+       $movement = $event->movement;
 
-    protected function decreaseFromLocation(ToolMovement $movement): void
-    {
-        if (!$movement->from_location_id) {
-            return;
-        }
-
-        // Usamos lockForUpdate para prevenir condiciones de carrera
-        $stock = StockTool::where('tool_id', $movement->tool_id)
-            ->where('location_id', $movement->from_location_id)
-            ->lockForUpdate()
-            ->first();
-
-        if (!$stock) {
-            throw new RuntimeException('Stock record not found for source location.');
-        }
-
-        // Verificamos que haya suficiente stock antes de restar
-        if ($stock->quantity < $movement->quantity) {
-            throw new RuntimeException(
-                'Insufficient stock in source location. Available: ' . 
-                $stock->quantity . ', Requested: ' . $movement->quantity
+        // CASO 1: Ingreso de stock (from_location es nulo)
+        if (is_null($movement->from_location_id) && !is_null($movement->to_location_id)) {
+            
+            // Buscamos o creamos el registro de stock en la ubicación de destino
+            $stock = StockTool::firstOrCreate(
+                [
+                    'tool_id'     => $movement->tool_id,
+                    'location_id' => $movement->to_location_id,
+                ],
+                [
+                    'quantity'    => 0, // Valor inicial si se crea
+                    'status'      => 'available', // O el estado por defecto
+                ]
             );
-        }
 
-        $stock->decrement('quantity', $movement->quantity);
+            // Incrementamos la cantidad
+            $stock->increment('quantity', $movement->quantity);
+        }
         
-        // Si después de decrementar la cantidad es 0, podrías considerar eliminar el registro
-        // o mantenerlo con cantidad 0 según tus necesidades
-        if ($stock->quantity <= 0) {
-            // $stock->delete(); // O mantenerlo con cantidad 0
+        if ($movement->from_location_id && $movement->to_location_id) {
+            // Transferencia entre ubicaciones
+            $stockFrom = StockTool::where('tool_id', $movement->tool_id)
+                ->where('location_id', $movement->from_location_id)
+                ->first();
+
+            // Decrementamos el stock de la ubicación de origen
+            $stockFrom->decrement('quantity', $movement->quantity);
+
+            // Buscamos o creamos el registro de stock en la ubicación de destino
+            $stockTo = StockTool::firstOrCreate(
+                [
+                    'tool_id'     => $movement->tool_id,
+                    'location_id' => $movement->to_location_id,
+                ],
+                [
+                    'quantity'    => 0, // Valor inicial si se crea
+                    'status'      => 'available', // O el estado por defecto
+                ]
+            );
+
+            // Incrementamos la cantidad en la ubicación de destino
+            $stockTo->increment('quantity', $movement->quantity);
         }
     }
 
-    protected function increaseToLocation(ToolMovement $movement): void
-    {
-        // Usamos updateOrCreate para manejar mejor la concurrencia
-        $stock = StockTool::updateOrCreate(
-            [
-                'tool_id' => $movement->tool_id,
-                'location_id' => $movement->to_location_id,
-            ],
-            [
-                // Si es un registro nuevo, cantidad será 0 + movement->quantity
-                // Si existe, se incrementará en el siguiente paso
-                'quantity' => DB::raw('COALESCE(quantity, 0)'),
-            ]
-        );
-        
-        // Incrementamos la cantidad
-        $stock->increment('quantity', $movement->quantity);
-        
-        // Alternativa más segura con bloqueo:
-        // StockTool::where('tool_id', $movement->tool_id)
-        //     ->where('location_id', $movement->to_location_id)
-        //     ->lockForUpdate()
-        //     ->increment('quantity', $movement->quantity);
-    }
+   
+
+    
 }

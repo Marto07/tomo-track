@@ -13,14 +13,33 @@ return new class extends Migration
     {
         Schema::create('locations', function (Blueprint $table) {
             $table->id();
+
             $table->string('name');
+
             $table->text('description')->nullable();
-            $table->string('street');
+
+            $table->string('street')->nullable();
+
             $table->string('apartment')->nullable();
-            $table->integer('number')->nullable();
-            $table->string('city_id')->constrained('cities')->onDelete('restrict');
-            $table->foreignId('location_type_id')->constrained('location_types')->onDelete('restrict');
+
+            $table->string('number')->nullable();
+
+            $table->decimal('latitude', 10, 7)->nullable();//for coordinates
+            
+            $table->decimal('longitude', 10, 7)->nullable();//for coordinates
+
+            $table->foreignId('city_id')
+                ->nullable()
+                ->constrained('cities')
+                ->restrictOnDelete();
+
+            $table->foreignId('location_type_id')
+                ->nullable()
+                ->constrained('location_types')
+                ->restrictOnDelete();
+
             $table->timestamps();
+
             $table->softDeletes();
         });
     }

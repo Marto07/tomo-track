@@ -4,10 +4,12 @@ use Illuminate\Support\Facades\Route;
 use Modules\Tool\Http\Controllers\ToolController;
 use Modules\Tool\Http\Controllers\CategoryController;
 use Modules\Tool\Http\Controllers\MovementTypeController;
+use Modules\Tool\Http\Controllers\ToolMovementController;
 
-Route::prefix('v1')->group(function () {
+Route::middleware(['auth:sanctum', 'verified'])->prefix('v1')->group(function () {
     Route::apiResource('tools', ToolController::class)->names('tools');
     Route::apiResource('categories', CategoryController::class)->names('categories');
     Route::apiResource('movement-types', MovementTypeController::class)->names('movement-type');
-    Route::apiResource('tool-movements', \Modules\Tool\Http\Controllers\ToolMovementController::class)->names('tool-movements');
+    Route::post('tools/add-stock', [ToolMovementController::class, 'addStock'])->name('tools.add-stock');
+    Route::post('tools/transfer', [ToolMovementController::class, 'transfer'])->name('tools.transfer');
 });

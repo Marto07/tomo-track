@@ -1,3 +1,5 @@
--Modelos: ToolMovements, EmployeeMovements, Construction
--CRUD Construction, Location x construction (address)
--CRUD ToolMovements
+UPDATE TOOL STOCK LISTENER
+ +handle(): void
+ +checkStock(herramienta, cantidad_a_mover): boolean //le pasamos la herramienta y cantidad y deberia de decirnos si hay suficientes herramientas para mover
+ +decreaseStock(herramienta, location, cantidad_movida): cantidad_restante //descontamos la cantidad movida de la localizacion ne la que estaba
+ +increaseStock(herramienta, to_location, cantidad_movida): cantidad_total

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Tool\Models\Category;
 use Modules\Company\Models\Company;
+use Modules\Tool\Database\Factories\ToolFactory;
 
 class Tool extends Model
 {
@@ -31,10 +32,12 @@ class Tool extends Model
         return $this->belongsTo(Company::class);
     }
 
+    protected static function newFactory()
+    {
+        return ToolFactory::new();
+    } 
 
 
-    // protected static function newFactory(): ItemFactory
-    // {
-    //     // return ItemFactory::new();
-    // }
+
+  
 }

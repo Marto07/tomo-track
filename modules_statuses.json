@@ -1,9 +1,5 @@
 {
     "Location": true,
-    "Item": true,
     "Core": true,
-    "Company": true,
-    "Employee": true,
-    "Construction": true,
     "Tool": true
 }

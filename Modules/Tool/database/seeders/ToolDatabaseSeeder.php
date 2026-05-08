@@ -16,6 +16,7 @@ class ToolDatabaseSeeder extends Seeder
         $this->call([
             CategoriesSeeder::class,
             ToolSeeder::class,
+            MovementTypeSeeder::class,
         ]);
     }
 }
