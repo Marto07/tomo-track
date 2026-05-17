@@ -4,14 +4,16 @@ namespace Modules\Tool\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreTool extends FormRequest
+class UpdateMovementTypeRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
      */
     public function rules(): array
     {
-        return [];
+        return [
+            'name' => 'required|string|max:255|unique:movement_types,name,' . $this->route('id'),
+        ];
     }
 
     /**

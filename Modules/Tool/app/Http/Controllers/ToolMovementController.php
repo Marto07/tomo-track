@@ -13,6 +13,8 @@ use Modules\Tool\Services\ToolMovementService;
 use Modules\Tool\Services\ToolService;
 use Illuminate\Support\Facades\Log;
 use Modules\Tool\Exceptions\NotEnoughStock;
+use Modules\Tool\Http\Requests\AddStockToolRequest;
+use Modules\Tool\Http\Requests\TransferToolRequest;
 
 class ToolMovementController extends Controller
 {
@@ -30,14 +32,9 @@ class ToolMovementController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function addStock(Request $request) {
+    public function addStock(AddStockToolRequest $request) {
         //validate request
-        $validated = $request->validate([
-            'tool_id' => 'required|exists:tools,id',
-            'to_location_id' => 'required|exists:locations,id',
-            'quantity' => 'required|integer|min:1',
-            // 'movement_type_id' => 'required|exists:movement_types,id',
-        ]);
+        $validated = $request->validated();
 
         //if validation success, we initialize the service
         $toolService = new ToolService();
@@ -61,14 +58,9 @@ class ToolMovementController extends Controller
 
 
     // Transfer tool from point A to point B
-    public function transfer(Request $request) {
+    public function transfer(TransferToolRequest $request) {
         //validate request
-        $validated = $request->validate([
-            'tool_id' => 'required|exists:tools,id',
-            'from_location_id' => 'required|exists:locations,id',
-            'to_location_id' => 'required|exists:locations,id|different:from_location_id',
-            'quantity' => 'required|integer|min:1',
-        ]);
+        $validated = $request->validated();
 
         //if validation success, we initialize the service
         $toolService = new ToolService();

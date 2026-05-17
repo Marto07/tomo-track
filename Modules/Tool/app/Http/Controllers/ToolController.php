@@ -4,9 +4,9 @@ namespace Modules\Tool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Modules\Tool\Http\Requests\StoreTool;
-use Modules\Tool\Http\Requests\UpdateTool;
 use Modules\Core\Traits\ApiResponse;
+use Modules\Tool\Http\Requests\StoreToolRequest;
+use Modules\Tool\Http\Requests\UpdateToolRequest;
 use Modules\Tool\Models\Tool;
 
 
@@ -36,7 +36,7 @@ class ToolController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTool $request) {
+    public function store(StoreToolRequest $request) {
         $validated = $request->validated();
         $item = Tool::create($validated);
         if(!$item) return $this->ErrorResponse(null, 404);
@@ -57,7 +57,7 @@ class ToolController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTool $request, $id) {
+    public function update(UpdateToolRequest $request, $id) {
         $validated = $request->validated();
         $item = Tool::with('category')->find($id);
         if (!$item) return $this->ErrorResponse(null, 404);

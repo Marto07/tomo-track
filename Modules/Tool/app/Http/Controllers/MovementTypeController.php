@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Tool\Models\MovementType;
 use Modules\Core\Traits\ApiResponse;
+use Modules\Tool\Http\Requests\StoreMovementTypeRequest;
+use Modules\Tool\Http\Requests\UpdateMovementTypeRequest;
 
 class MovementTypeController extends Controller
 {
@@ -20,10 +22,8 @@ class MovementTypeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:movement_types,name',
-        ]);
+    public function store(StoreMovementTypeRequest $request) {
+        $validated = $request->validated();
 
         $movementType = MovementType::create($validated);
         if (!$movementType) {
@@ -48,10 +48,8 @@ class MovementTypeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id) {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:movement_types,name,' . $id,
-        ]);
+    public function update(UpdateMovementTypeRequest $request, $id) {
+        $validated = $request->validated();
 
         $movementType = MovementType::find($id);
         if (!$movementType) {
