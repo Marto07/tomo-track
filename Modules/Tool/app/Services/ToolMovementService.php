@@ -2,11 +2,15 @@
 
 namespace Modules\Tool\Services;
 
+use Illuminate\Support\Facades\DB;
 use Modules\Tool\Models\StockTool;
 use Modules\Tool\Models\ToolMovement;
 
 class ToolMovementService
 {
+    public function __construct(
+        protected ToolService $toolService
+    ) {}
 
     public function addStock(int $toolId, int $locationId, int $quantity = 0) : ToolMovement
     {
@@ -21,7 +25,7 @@ class ToolMovementService
         );
     }
 
-    public function moveStock(int $toolId, int $fromLocationId, int $toLocationId, int $quantity)
+    public function moveStock(int $toolId, int $fromLocationId, int $toLocationId, int $quantity) : ToolMovement
     {
         return ToolMovement::create(
             [ 
@@ -33,5 +37,16 @@ class ToolMovementService
                 'moved_at' => now(),
             ]
         );
+    }
+
+    public function transferTool(int $toolId, int $fromLocationId, int $toLocationId, int $quantity) : ToolMovement
+    {
+        
+        $this->toolService->validateStock($toolId, $fromLocationId, $quantity);
+            
+        $movement = $this->moveStock($toolId, $fromLocationId, $toLocationId, $quantity);
+    
+        return $movement;
+
     }
 }

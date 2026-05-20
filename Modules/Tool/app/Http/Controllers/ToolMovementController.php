@@ -13,6 +13,8 @@ use Modules\Tool\Services\ToolMovementService;
 use Modules\Tool\Services\ToolService;
 use Illuminate\Support\Facades\Log;
 use Modules\Tool\Actions\AddStockToolAction;
+use Modules\Tool\Actions\TransferToolAction;
+use Modules\Tool\Classes\DTO\TransferToolData;
 use Modules\Tool\Exceptions\NotEnoughStock;
 use Modules\Tool\Http\Requests\AddStockToolRequest;
 use Modules\Tool\Http\Requests\TransferToolRequest;
@@ -58,29 +60,33 @@ class ToolMovementController extends Controller
 
 
     // Transfer tool from point A to point B
-    public function transfer(TransferToolRequest $request) {
-        //validate request
-        $validated = $request->validated();
+    public function transfer(TransferToolRequest $request, TransferToolAction $action) {
 
-        //if validation success, we initialize the service
-        $toolService = new ToolService();
+        $validated = $request->validated();    
 
+        $data = new TransferToolData(
+            $validated['tool_id'],
+            $validated['from_location_id'],
+            $validated['to_location_id'],
+            $validated['quantity']
+        );
 
         try {
-            $result = $toolService->transferTool(
-                $validated['tool_id'],
-                $validated['from_location_id'],
-                $validated['to_location_id'],
-                $validated['quantity']
-            );
+            $result = $action($data);
         } catch (NotEnoughStock $e) {
+
+            Log::error($e->getMessage());
             return $this->errorResponse("Not enough stock.", 400);
+
         } catch (\Throwable $th) {
+
             Log::error("Error transferring tool: " . $th->getMessage());
             return $this->errorResponse("Error in transferring tool.", 500);
+
         }
 
         $movement = $result->load(['tool', 'fromLocation', 'toLocation', 'movementType']);
+        
         return $this->successResponse($movement, 201);
     }
 
