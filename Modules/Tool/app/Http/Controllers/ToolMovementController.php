@@ -12,6 +12,7 @@ use Modules\Tool\Events\ToolMoved;
 use Modules\Tool\Services\ToolMovementService;
 use Modules\Tool\Services\ToolService;
 use Illuminate\Support\Facades\Log;
+use Modules\Tool\Actions\AddStockToolAction;
 use Modules\Tool\Exceptions\NotEnoughStock;
 use Modules\Tool\Http\Requests\AddStockToolRequest;
 use Modules\Tool\Http\Requests\TransferToolRequest;
@@ -32,19 +33,18 @@ class ToolMovementController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function addStock(AddStockToolRequest $request) {
+    public function addStock(AddStockToolRequest $request, AddStockToolAction $action) {
         //validate request
         $validated = $request->validated();
 
-        //if validation success, we initialize the service
-        $toolService = new ToolService();
-
         try {
-            $movement = $toolService->addStock(
+
+            $movement = $action(
                 $validated['tool_id'],
                 $validated['to_location_id'],
                 $validated['quantity']
             );
+
         } catch (\Throwable $th) {
             Log::error("Error adding stock: " . $th->getMessage());
             return $this->errorResponse("Error in adding stock.", 500);
