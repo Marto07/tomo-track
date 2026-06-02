@@ -21,9 +21,6 @@ class ToolMovement extends Model
         'moved_at',
     ];
 
-    protected $dispatchesEvents = [
-        'created' => \Modules\Tool\Events\ToolMoved::class,
-    ];
 
     public function tool()
     {

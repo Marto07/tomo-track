@@ -5,8 +5,7 @@ namespace Modules\Tool\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
-// use Modules\Tool\Database\Factories\CategoryFactory;
+use Modules\Tool\Database\Factories\CategoryFactory;
 
 class Category extends Model
 {
@@ -20,8 +19,9 @@ class Category extends Model
     {
         return $this->hasMany(Tool::class);
     }
-    // protected static function newFactory(): CategoryFactory
-    // {
-    //     // return CategoryFactory::new();
-    // }
+
+    protected static function newFactory(): CategoryFactory
+    {
+        return CategoryFactory::new();
+    }
 }

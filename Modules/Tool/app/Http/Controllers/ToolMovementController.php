@@ -4,6 +4,7 @@ namespace Modules\Tool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Modules\Tool\Models\ToolMovement;
 use Modules\Tool\Models\Tool;
 use Modules\Location\Models\Location;
@@ -27,7 +28,15 @@ class ToolMovementController extends Controller
      */
     public function index()
     {
-        return $this->successResponse(ToolMovement::with(['tool', 'fromLocation', 'toLocation', 'movementType'])->get());
+        return $this->successResponse(
+            ToolMovement::with([
+                'tool', 
+                'fromLocation', 
+                'toLocation', 
+                'movementType'
+                ])
+                ->paginate(20)
+        );
     }
 
 
@@ -75,19 +84,25 @@ class ToolMovementController extends Controller
             $result = $action($data);
         } catch (NotEnoughStock $e) {
 
-            Log::error($e->getMessage());
             return $this->errorResponse("Not enough stock.", 400);
 
         } catch (\Throwable $th) {
 
-            Log::error("Error transferring tool: " . $th->getMessage());
+            Log::error("Error transferring tool: " . $th->getMessage(), [
+                "message"  => $th->getMessage(),
+                "exception" => $th,
+                "file" => $th->getFile(),
+                "line" => $th->getLine(),
+                "request" => $request->all(),
+                "user_id" => Auth::id()
+            ]);
             return $this->errorResponse("Error in transferring tool.", 500);
 
         }
 
         $movement = $result->load(['tool', 'fromLocation', 'toLocation', 'movementType']);
         
-        return $this->successResponse($movement, 201);
+        return $this->successResponse($movement, "data retrieved successfully", 201);
     }
 
     /**

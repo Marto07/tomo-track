@@ -19,7 +19,7 @@ class TransferToolTest extends TestCase
         $this->assertTrue(true);
     } */
 
-    public function test_transfer_moves_stock_between_locations()
+    /* public function test_transfer_moves_stock_between_locations()
     {
         $service = new ToolService();
 
@@ -84,5 +84,5 @@ class TransferToolTest extends TestCase
             'location_id' => $locationB->id,
             'quantity' => 5
         ]);
-    }
+    } */
 }

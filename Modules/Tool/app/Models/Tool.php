@@ -27,12 +27,7 @@ class Tool extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function company()
-    {
-        return $this->belongsTo(Company::class);
-    }
-
-    protected static function newFactory()
+    protected static function newFactory() : ToolFactory
     {
         return ToolFactory::new();
     } 

@@ -1,15 +1,15 @@
 <?php
 
-namespace Modules\Location\Database\Factories;
+namespace Modules\Tool\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class LocationFactory extends Factory
+class CategoryFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      */
-    protected $model = \Modules\Location\Models\Location::class;
+    protected $model = \Modules\Tool\Models\Category::class;
 
     /**
      * Define the model's default state.
@@ -18,9 +18,6 @@ class LocationFactory extends Factory
     {
         return [
             'name' => fake()->word(),
-            'description' => fake()->address(),
-            'street' => fake()->streetName(),
-            
         ];
     }
 }
