@@ -3,6 +3,7 @@
 namespace Modules\Tool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Modules\Tool\Models\ToolMovement;
@@ -42,7 +43,7 @@ class ToolMovementController extends Controller
 
 
     /**
-     * Store a newly created resource in storage.
+     * Adds a specified quantity of a tool to a location's inventory.
      */
     public function addStock(AddStockToolRequest $request, AddStockToolAction $action) {
         //validate request
@@ -68,8 +69,12 @@ class ToolMovementController extends Controller
 
 
 
-    // Transfer tool from point A to point B
-    public function transfer(TransferToolRequest $request, TransferToolAction $action) {
+    /**
+     * Transfers a quantity of a tool from one location to another,
+     * validating stock availability and updating inventory accordingly.
+     */
+    public function transfer(TransferToolRequest $request, TransferToolAction $action) : JsonResponse
+    {
 
         $validated = $request->validated();    
 

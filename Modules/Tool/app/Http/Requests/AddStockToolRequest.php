@@ -4,6 +4,13 @@ namespace Modules\Tool\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+
+
+/**
+ * @property-read int $tool_id Tool to supply.
+ * @property-read int $to_location_id Destination location.
+ * @property-read int $quantity Quantity to supply.
+ */
 class AddStockToolRequest extends FormRequest
 {
     /**

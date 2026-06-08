@@ -22,6 +22,45 @@ This project was built to practice:
 - Authentication and protected API endpoints 
 - Scalable system design for future expansion 
 
+## 🏗️ Project Architecture
+The application follows a modular structure using Laravel Modules. Each business domain is isolated into its own module, making the codebase easier to maintain, scale, and extend.
+
+Module Structure
+
+```text
+Modules/
+├── Tools/
+│   ├── app/
+│   │   ├── Http/
+│   │   │   ├── Controllers/
+│   │   │   ├── Requests/
+│   │   │   └── Resources/
+│   │   ├── Models/
+│   │   ├── Services/
+│   │   └── Providers/
+│   ├── resources/
+│   │   └── views/
+│   └── routes/
+│       ├── api.php
+│       └── web.php
+│
+├── Locations/
+└── ...
+```
+
+
+### Responsibilities
+
+| Directory              | Purpose                              |
+| ---------------------- | ------------------------------------ |
+| `app/Http/Controllers` | API endpoints and request handling   |
+| `app/Http/Requests`    | Validation and authorization logic   |
+| `app/Models`           | Eloquent models                      |
+| `app/Services`         | Business logic and domain operations |
+| `routes/api.php`       | Module API routes                    |
+| `routes/web.php`       | Module web routes                    |
+| `app/Actions`          | Complex Use cases                    |
+ 
 ## 🚧 Planned Features Current focus: 
 - Tool and material management 
 - Stock control 
