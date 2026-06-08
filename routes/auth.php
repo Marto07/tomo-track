@@ -11,9 +11,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
 
-    Route::post('/register', [RegisteredUserController::class, 'store'])
-        ->middleware('guest')
-        ->name('register');
+    /* 
+        Route::post('/register', [RegisteredUserController::class, 'store'])
+            ->middleware('guest')
+            ->name('register'); 
+    */
 
     // our custom login route
     Route::post('/login', [LoginController::class, 'store'])
